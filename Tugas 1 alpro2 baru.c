@@ -6,7 +6,7 @@ char namaFile[100]; //namaFile buat menyimpan nama file
 char removeFile[100]; //removeFile buat menyimpan nama file yang akan diremove
 char masukFile[100]; //masukFile buat menyimpan kalimat yang akan dimasukan
 char keluarFile[100]; //keluarFile buat menyimpan kalimat yang dari file (mau di output)
-int p,del,size; //p buat menu, del buat status delete(kedelete apa engga), size buat ukuran file
+int cek,p,del,size; //p buat menu, del buat status delete(kedelete apa engga), size buat ukuran file
 
 void buatFile(){
 	printf("Masukan nama file : "); //output
@@ -28,25 +28,36 @@ void buatFile(){
 	fclose(newFile); //tutup akses file
 }
 
+int cekFile(char nama[100]){
+	int status;
+	newFile = fopen(nama,"r");
+	if(newFile == NULL){
+		status = 0;
+	}else{
+		status = 1;
+	}
+	fclose(newFile);
+	return status;
+}
+
 void tambahFile(){
-	newFile = fopen(namaFile,"r"); //akses file dengan kode akses read (r)
-	if (newFile == NULL){ // jika file yang diakses tidak ada
+	cek = cekFile(namaFile);
+	if (cek == 0){ // jika file yang diakses tidak ada
 		printf("Maaf anda harus membuat file terlebih dahulu !!");
 	}else{ //selain itu
 		printf("Masukan Kata atau Kalimat : "); //output
 		fflush(stdin); //ngebersihin buffer (ga ngerti aku juga hehe)
 		gets(masukFile); //get string (buat input string)
-		fclose(newFile);
 		newFile = fopen(namaFile,"a"); //akses file dengan kode akses "a" (append)
 		fprintf(newFile,"%s",masukFile); //input file ke newFile(yang diakses diatas) dengan tipe %s(string) isi kalimatnya ada divariable masukFile
 		printf("Kata atau Kalimat %s berhasil dimasukkan !!\n",masukFile); //Output berhasil
+		fclose(newFile);//tutup akses file
 	}
-	fclose(newFile);//tutup akses file
 }
 
 void tampilFile(){
-	newFile = fopen(namaFile,"r"); //akses file dengan kode akses read (r)
-	if(newFile == NULL){ //jika file yang diakses tidak ada
+	cek = cekFile(namaFile);
+	if(cek == 0){ //jika file yang diakses tidak ada
 		printf("Maaf anda harus membuat file terlebih dahulu !!"); //output
 	}else{
 		fgets(keluarFile,100,newFile); // fgets untuk menyimpan isi file yang diakses newFile kedalam variable keluarFile dengan maksimal karakter 100
@@ -58,15 +69,13 @@ void tampilFile(){
 			printf("Kata atau kalimat yang tertulis dalam file adalah : %s\n",keluarFile); //output
 		}
 	}
-	fclose(newFile); //tutup akses file
 }
 
 void hapusFile(){
-	newFile = fopen(namaFile,"r");//akses file dengan kode akses read
+	cek = cekFile(namaFile);
 	if(newFile == NULL){ //jika file yang diakses kosong
 		printf("Maaf anda harus membuat file terlebih dahulu !!"); //output
 	}else{
-		fclose(newFile);
 		del = remove(namaFile); //meremove file dengan nama namaFile dan memberikan status(berhasil atau tidak) kedalam variable del (ini masih error entah kenapa T_T status yang dihasilkan -1 (artinya error))
 		if (del == 0){ //jika status(del) = 0 (berhasil)
 			printf("File %s telah dihapus !! \n",namaFile);//output
